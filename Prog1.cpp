@@ -1,3 +1,22 @@
+/* Practice fortask parallel programming with message passing communication among multiple processes using Unix pipe:
+
+Study the attached sample program in which two child processes communicate viaUnix pipes(message passing), and write a task parallel program for the following task.
+
+The given task is comparing the efficiencies of two different implementations of the Fibonacci number generation function, i.e., recursive version vs. iterative version.
+Instead of doing serial testing in which the two versions of the Fibonacci function are called serially in a process, we plan to test them in parallel with a separate
+process for each. Your program should be based on the SPMD task parallel model and include 4 processes (1 parent and 3 child processes). Upon execution,a numeric value N 
+(for Nth Fibo#) is accessed from the commandline argumentand the parent process creates needed pipes and forks three child processes. The first child process is 
+responsible forthe control, i.e., sending a number (N) to both the second and the third child processes,receiving results(execution time taken)from those two child 
+processes,and displaying them.
+The second child process is responsible for executing the recursive version of the Fibonacci function upon receiving the number N, displaying the result
+(Nth Fibonacci #), and sends the execution time taken to the first child process(controller). Analogously, the third child process is responsible for executing the iterative
+version of the Fibonacci function upon receiving the number N, displaying the result (Nth Fibonacci #), and sendsthe execution time taken to the first child 
+process(controller). For the execution time checking, you should include codes for time checking (any kind is OK) in the 2ndand 3rd child processes, i.e., inserting a
+wall-clock time checking code right before the Fibonacci function call and right after the function call. 
+
+All communications should be done in the message passing way using Unix pipes. It is the programmer’s jobto define and use appropriate number/kind of pipes.
+*/
+
 #include <unistd.h> //for fork, pipe, wait
 #include <cstdlib> //for exit(0)
 #include <cstring>
