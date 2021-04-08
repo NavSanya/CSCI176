@@ -1,35 +1,32 @@
-/*Parallel merge sort with OpenMP.
-Consider the merge sort algorithm that you studied in data structures/algorithm course(s). 
-For a given problem size n, each thread is assigned a local list of n/p elements.
-In this version of parallel merge sort, each thread performs ‘qsort’ (GNU library quicksort) to 
-sort the local list instead of implementing the recursion-based method.
-Merging step is a tree reduction, e.g., thread_0 merges locally sorted lists from thread_0 and 
-thread_1, thread_2 merges locally sorted lists from thread_2 and thread_3, and so on. 
-Eventually, thread_0 produces the final globally sorted list.
-A more detailed guide is shown below.
-Programming guide -----------------------------------------------------------------------------------------
-1. Access command line arguments for n (total number of elements in the list) and p (total number of
- threads); create a list (dynamic array) of n integers; initialize the list with random numbers – each 
- random number should be less than or equal to n, and it is suggested to use ‘parallel for’ loop. 
-2. Time checking starts at this point; please use ‘omp_get_wtime()’ that OpenMP supports.
-3. Launch multiple threads; in each thread, create a local list of size n/p, copy list[my_start ~ my_end] to 
- the local list, and perform qsort (GNU library quicksort); each thread is responsible for updating the 
- global list with the sorted local list. It is suggested to use ‘parallel for’ loop for local list copy steps.
-4. Merging steps need a while loop, which you practiced in HW1; pseudo-code is shown below:
- divisor = 2; core-difference = 1;
- while (divisor <= thread_count)
- { //use barrier synchronization here;
- //determine whether this thread is sender or receiver;
- //if receiver, perform merging operation by calling merge(..) function;
- //there is nothing to do for a sender;
- divisor *= 2; core_difference *= 2;
- }
- Merge(..) function should be defined separately; one suggested idea is that the function updates the 
- global list with the merged result.
-5. Time checking ends at this point; please use ‘omp_get_wtime()’ that OpenMP supports.
-6. Finally, please make a function to check whether the final list is completely sorted or not.
- This function is easy to define, i.e., using a for loop (i=0 ~ n-1), check whether (list[i] > list[i+1]).
-----------------------------------------------------------------------------------------------------------------------------*/
+/*Write a Pthreads parallel program for matrix multiplication.
+The matrix multiplication problem is defined as:
+ A(L*m) * B(m*n) = C(L*n)
+ m-1
+ where, A, B and C are L*m, m*n and L*n matrices, respectively, and Ci,j = å (Ai,k * Bj,k)
+ k=0
+Your program should access the command line arguments for the matrix dimensions, i.e., L, m 
+and n, together with the number of threads used for the computation.
+The matrices should be declared as global (shared among all threads), and your main process
+initializes the values with the following formula: Ai,j = i+j+1 and Bi,j = i+j
+For this, you need to declare the matrices as dynamic 2-dimensional arrays.
+After initializing A and B matrices, the main process should create the requested number of 
+threads and let them work for building C matrix, i.e., entries of the C matrix are computed and 
+updated by those slave threads.
+To distribute the task of completing the C matrix to those multiple threads fairly, please assign 
+rows (total number of rows = L) of the C matrix to the threads in a cyclic way (jump-p way), i.e.,
+for example with P=4, Th_0 is assigned with row_0, Th_1 is assigned with row_1, Th_2 is 
+assigned with row_2, Th_3 is assigned with row3, then, Th_0 is assigned with row_4, Th_1 is 
+assigned with row_5, and so on.
+Check the correctness of your program with small size matrices first; and then use the following 
+dimensions of the matrices for the final output to submit: 
+ L=1003, m=2000, n=3000
+Since the size of the output is extremely big (~36MB), please display only [first_10 * first_10]
+and [last_10 * last_10] entries of matrix C; this should be done in the main process after joining 
+the threads.
+Run your program with number of threads = 1, 2 , 4, 8 and check/show the execution time for 
+each run. For this, you need to use time checking codes in your program.
+* Finally, please try the BT way of optimization, i.e., A(L*m) * BT(n*m) = C(L*n), and check 
+ how it affects the execution time.*/
 
 #include <cstdlib>
 #include <sys/time.h>
